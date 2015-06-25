@@ -26,7 +26,7 @@
             android:name=".FollowMeActivity"
             android:excludeFromRecents="true"
             android:exported="true"
-            android:label="Follow Me">
+            android:label="Follow me for 1h">
             <meta-data
                 android:name="sneer:session-type"
                 android:value="follow me"/>
