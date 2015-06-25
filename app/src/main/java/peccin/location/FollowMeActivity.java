@@ -35,11 +35,12 @@ public class FollowMeActivity extends Activity implements LocationListener {
         setContentView(R.layout.activity_follow_me);
 		map = (ImageView) findViewById(R.id.map_view);
 
+		showProgressBar();
+
 		startSession();
 
 		service = new Intent(this, FollowMeService.class);
     }
-
 
 	private void startSession() {
 		session = PartnerSession.join(this, new PartnerSession.Listener() {
@@ -65,9 +66,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 			int width = map.getMeasuredWidth();
 			int height = map.getMeasuredHeight();
 
-			setProgressBarIndeterminate(true);
-			setProgressBarIndeterminateVisibility(true);
-			setProgressBarVisibility(true);
+			showProgressBar();
 
 			new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
 				getMapURL(width, height)
@@ -108,6 +107,12 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
         return url;
     }
+
+	private void showProgressBar() {
+		setProgressBarIndeterminate(true);
+		setProgressBarIndeterminateVisibility(true);
+		setProgressBarVisibility(true);
+	}
 
 	@Override
 	protected void onPause() {
