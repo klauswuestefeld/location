@@ -1,4 +1,4 @@
-package peccin.location;
+package felipebueno.location;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

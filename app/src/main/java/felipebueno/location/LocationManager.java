@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package peccin.location;
+package felipebueno.location;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package peccin.location;
+package felipebueno.location;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
-import static peccin.location.LocationUtils.initProviders;
+import static felipebueno.location.LocationUtils.initProviders;
 
 public class FollowMeService extends Service implements LocationListener {
 

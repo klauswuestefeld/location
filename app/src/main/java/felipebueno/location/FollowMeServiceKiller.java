@@ -1,4 +1,4 @@
-package peccin.location;
+package felipebueno.location;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

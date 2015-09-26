@@ -1,4 +1,4 @@
-package peccin.location;
+package felipebueno.location;
 
 import android.location.LocationListener;
 import android.util.Log;

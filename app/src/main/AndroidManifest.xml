@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="peccin.location"
+    package="felipebueno.location"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -15,7 +15,7 @@
             android:value=""/>
 
         <activity
-            android:name=".SendLocationActivity"
+            android:name="felipebueno.location.SendLocationActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Send Location"
@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".FollowMeActivity"
+            android:name="felipebueno.location.FollowMeActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Follow me for 1h">
@@ -33,12 +33,12 @@
         </activity>
 
         <service
-            android:name=".FollowMeService"
+            android:name="felipebueno.location.FollowMeService"
             android:enabled="true">
         </service>
 
         <receiver
-            android:name=".FollowMeServiceKiller"
+            android:name="felipebueno.location.FollowMeServiceKiller"
             android:enabled="true">
         </receiver>
     </application>

@@ -1,4 +1,4 @@
-package peccin.location;
+package felipebueno.location;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
-import static peccin.location.LocationUtils.initProviders;
+import static felipebueno.location.LocationUtils.initProviders;
 
 public class FollowMeActivity extends Activity implements LocationListener {
 
