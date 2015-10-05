@@ -6,13 +6,13 @@ import android.content.Intent;
 
 public class FollowMeServiceKiller extends BroadcastReceiver {
 
-    public static FollowMeService victim;
+	public static FollowMeService victim;
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        victim.stopForeground(true);
-        victim.stopSelf();
-    	FollowMeService.isRunning = false;
-    }
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		victim.stopForeground(true);
+		victim.stopSelf();
+		FollowMeService.isRunning = false;
+	}
 
 }

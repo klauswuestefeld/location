@@ -15,8 +15,8 @@ public class SendLocationActivity extends Activity implements LocationListener {
 	private LocationManager locationManager;
 
 	private Location latestLocation;
-    private TextView textAccuracy;
-    private Button sendButton;
+	private TextView textAccuracy;
+	private Button sendButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +24,12 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		setContentView(R.layout.activity_location);
 
 		textAccuracy = (TextView) findViewById(R.id.textAccuracy);
-        sendButton = (Button) findViewById(R.id.buttonSend);
-        sendButton.setEnabled(false);
+		sendButton = (Button) findViewById(R.id.buttonSend);
+		sendButton.setEnabled(false);
 
 		locationManager = LocationManager.getInstance(getApplicationContext());
 		LocationUtils.initProviders(locationManager, 1000, this);
 	}
-
 
 
 	@Override
@@ -41,17 +40,17 @@ public class SendLocationActivity extends Activity implements LocationListener {
 	}
 
 	public void onSendClicked(View view) {
-        Intent msg = getIntent().getParcelableExtra("SEND_MESSAGE");
-        if (msg != null) {
-            String url = "Location:\nhttps://google.com/maps/place/" + latestLocation.getLatitude() + "," + latestLocation.getLongitude();
-            startService(msg.setAction(url));
-        }
+		Intent msg = getIntent().getParcelableExtra("SEND_MESSAGE");
+		if (msg != null) {
+			String url = "Location:\nhttps://google.com/maps/place/" + latestLocation.getLatitude() + "," + latestLocation.getLongitude();
+			startService(msg.setAction(url));
+		}
 		finish();
-    }
+	}
 
-    public void onCancelClicked(View view) {
-        finish();
-    }
+	public void onCancelClicked(View view) {
+		finish();
+	}
 
 
 	@Override
@@ -71,8 +70,16 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		});
 	}
 
-	@Override public void onStatusChanged(String provider, int status, Bundle extras) { }
-	@Override public void onProviderEnabled(String provider) { }
-	@Override public void onProviderDisabled(String provider) { }
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+	}
 
 }

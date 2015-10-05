@@ -21,8 +21,8 @@ public class MapDownloader extends AsyncTask<String, Void, Bitmap> {
 
 	public MapDownloader(ImageView bmImage, int width, int height, Activity activity, PartnerSession session) {
 		this.width = width;
-        this.height = height;
-        this.bmImage = bmImage;
+		this.height = height;
+		this.bmImage = bmImage;
 		this.activity = activity;
 		this.session = session;
 	}
@@ -41,8 +41,8 @@ public class MapDownloader extends AsyncTask<String, Void, Bitmap> {
 	}
 
 	protected void onPostExecute(Bitmap result) {
-        Bitmap newbitMap = Bitmap.createScaledBitmap(result, width, height, true);
-        bmImage.setImageBitmap(newbitMap);
+		Bitmap newbitMap = Bitmap.createScaledBitmap(result, width, height, true);
+		bmImage.setImageBitmap(newbitMap);
 		activity.setProgressBarIndeterminateVisibility(false);
 		activity.setProgressBarVisibility(false);
 	}
