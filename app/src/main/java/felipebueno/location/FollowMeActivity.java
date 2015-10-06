@@ -8,21 +8,19 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.ImageView;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
+import static felipebueno.location.LocationUtils.*;
 import static felipebueno.location.LocationUtils.initProviders;
+import static felipebueno.location.PartnerSessionSingleton.session;
 
 public class FollowMeActivity extends Activity implements LocationListener {
 
-	private static final String LATITUDE = "latitude";
-	private static final String LONGITUDE = "longitude";
 	private static final int SIZE = 640;
-	public static PartnerSession session;
 	private Intent service;
 
 	private LocationManager locationManager;
@@ -48,7 +46,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 	}
 
 	private void startSession() {
-		session = PartnerSession.join(this, new PartnerSession.Listener() {
+		PartnerSessionSingleton.setInstance(PartnerSession.join(this, new PartnerSession.Listener() {
 			@Override
 			public void onUpToDate() {
 				refresh();
@@ -58,7 +56,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 			public void onMessage(Message message) {
 				handle(message);
 			}
-		});
+		}));
 	}
 
 	private void refresh() {
@@ -75,8 +73,8 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 				showProgressBar();
 
-				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
-						getMapURL(width, height)
+				new MapDownloader(map, width, height, FollowMeActivity.this, session()).execute(
+					getMapURL(width, height)
 				);
 			}
 		});
@@ -129,7 +127,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 	@Override
 	protected void onDestroy() {
-		session.close();
+		session().close();
 		super.onDestroy();
 	}
 
@@ -138,7 +136,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 		Map<String, Double> m = new HashMap<>();
 		m.put(LATITUDE, location.getLatitude());
 		m.put(LONGITUDE, location.getLongitude());
-		session.send(m);
+		session().send(m);
 	}
 
 	@Override

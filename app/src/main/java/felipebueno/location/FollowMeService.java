@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
+import static felipebueno.location.LocationUtils.*;
 import static felipebueno.location.LocationUtils.initProviders;
+import static felipebueno.location.PartnerSessionSingleton.*;
 
 public class FollowMeService extends Service implements LocationListener {
 
@@ -70,9 +72,9 @@ public class FollowMeService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		HashMap<String, Double> m = new HashMap<>();
-		m.put("latitude", location.getLatitude());
-		m.put("longitude", location.getLongitude());
-		FollowMeActivity.session.send(m);
+		m.put(LATITUDE, location.getLatitude());
+		m.put(LONGITUDE, location.getLongitude());
+		session().send(m);
 	}
 
 	@Override

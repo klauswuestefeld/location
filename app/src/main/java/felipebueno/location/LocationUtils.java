@@ -9,6 +9,9 @@ public class LocationUtils {
 
 	private static final String TAG = "LOCATIONTEST";
 
+	static final String LATITUDE = "latitude";
+	static final String LONGITUDE = "longitude";
+
 	static void initProviders(LocationManager locationManager, int minTime, LocationListener listener) {
 		List<String> providers = locationManager.getAllProviders();
 		boolean hasFused = false;
