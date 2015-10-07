@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -14,13 +15,15 @@ import java.util.Map;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
-import static felipebueno.location.LocationUtils.*;
+import static felipebueno.location.LocationUtils.LATITUDE;
+import static felipebueno.location.LocationUtils.LONGITUDE;
+import static felipebueno.location.LocationUtils.TAG;
 import static felipebueno.location.LocationUtils.initProviders;
-import static felipebueno.location.PartnerSessionSingleton.session;
 
 public class FollowMeActivity extends Activity implements LocationListener {
 
 	private static final int MAX_SIZE = 640;
+	static final long MIN_TIME = 30000L;
 	private Intent service;
 
 	private LocationManager locationManager;
@@ -29,6 +32,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 	private double theirLatitude;
 	private double theirLongitude;
 	private ImageView map;
+	public static PartnerSession session;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +46,12 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 		startSession();
 
-		service = new Intent(this, FollowMeService.class);
+		if (!FollowMeService.isRunning)
+			service = new Intent(this, FollowMeService.class);
 	}
 
 	private void startSession() {
-		PartnerSessionSingleton.setInstance(PartnerSession.join(this, new PartnerSession.Listener() {
+		session = PartnerSession.join(this, new PartnerSession.Listener() {
 			@Override
 			public void onUpToDate() {
 				refresh();
@@ -56,13 +61,13 @@ public class FollowMeActivity extends Activity implements LocationListener {
 			public void onMessage(Message message) {
 				handle(message);
 			}
-		}));
+		});
 	}
 
 	private void refresh() {
 		if (locationManager == null) {
 			locationManager = LocationManager.getInstance(getApplicationContext());
-			initProviders(locationManager, 30000, this);
+			initProviders(locationManager, MIN_TIME, this);
 		}
 
 		map.post(new Runnable() {
@@ -73,11 +78,13 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 				showProgressBar();
 
-				new MapDownloader(map, width, height, FollowMeActivity.this, session()).execute(
+				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
 					getMapURL(width, height)
 				);
 			}
 		});
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, getClass().getSimpleName() + "refresh()->called");
 	}
 
 	private void handle(Message message) {
@@ -90,15 +97,18 @@ public class FollowMeActivity extends Activity implements LocationListener {
 			theirLatitude = m.get(LATITUDE);
 			theirLongitude = m.get(LONGITUDE);
 		}
+
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, getClass().getSimpleName() + "handle(message)->m" + m);
 	}
 
 	protected String getMapURL(int width, int height) {
 		if (width > height) {
-			width = SIZE;
-			height = SIZE * height / width;
+			width = MAX_SIZE;
+			height = MAX_SIZE * height / width;
 		} else {
-			height = SIZE;
-			width = SIZE * width / height;
+			height = MAX_SIZE;
+			width = MAX_SIZE * width / height;
 		}
 
 		String url = "https://maps.googleapis.com/maps/api/staticmap";
@@ -121,13 +131,15 @@ public class FollowMeActivity extends Activity implements LocationListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (!FollowMeService.isRunning)
-			startService(service);
+		finish();
 	}
 
 	@Override
 	protected void onDestroy() {
-		session().close();
+		if (session != null)
+			session.close();
+		if (!FollowMeService.isRunning)
+			startService(service);
 		super.onDestroy();
 	}
 
@@ -136,7 +148,9 @@ public class FollowMeActivity extends Activity implements LocationListener {
 		Map<String, Double> m = new HashMap<>();
 		m.put(LATITUDE, location.getLatitude());
 		m.put(LONGITUDE, location.getLongitude());
-		session().send(m);
+		session.send(m);
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged(1) session.send()->called");
 	}
 
 	@Override

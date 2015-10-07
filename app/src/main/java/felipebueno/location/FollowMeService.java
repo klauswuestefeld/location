@@ -11,13 +11,16 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import static felipebueno.location.LocationUtils.*;
+import static felipebueno.location.LocationUtils.LATITUDE;
+import static felipebueno.location.LocationUtils.LONGITUDE;
+import static felipebueno.location.LocationUtils.TAG;
 import static felipebueno.location.LocationUtils.initProviders;
-import static felipebueno.location.PartnerSessionSingleton.*;
 
 public class FollowMeService extends Service implements LocationListener {
 
@@ -74,13 +77,13 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		session().send(m);
 		Map<String, Double> map = new HashMap<>();
 		map.put(LATITUDE, location.getLatitude());
 		map.put(LONGITUDE, location.getLongitude());
 
+		FollowMeActivity.session.send(map);
 		if (BuildConfig.DEBUG)
-			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged() session.send()->called");
+			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged(2) session.send()->called");
 	}
 
 	@Override
