@@ -6,7 +6,7 @@ public class PartnerSessionSingleton {
 
 	private static PartnerSession INSTANCE;
 
-	public static void setInstance(PartnerSession session) {
+	public static synchronized void setInstance(PartnerSession session) {
 		check(INSTANCE == null && session != null);
 		INSTANCE = session;
 	}

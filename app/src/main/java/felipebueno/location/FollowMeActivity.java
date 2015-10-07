@@ -20,7 +20,7 @@ import static felipebueno.location.PartnerSessionSingleton.session;
 
 public class FollowMeActivity extends Activity implements LocationListener {
 
-	private static final int SIZE = 640;
+	private static final int MAX_SIZE = 640;
 	private Intent service;
 
 	private LocationManager locationManager;

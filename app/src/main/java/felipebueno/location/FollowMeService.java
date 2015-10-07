@@ -21,8 +21,8 @@ import static felipebueno.location.PartnerSessionSingleton.*;
 
 public class FollowMeService extends Service implements LocationListener {
 
-	public final static int SERVICE_ID = 1234;
-	private static final int THIRD_SECONDS = 30000;
+	public static final int SERVICE_ID = 1234;
+	private static final Long MIN_INTERVAL = 30000L;
 
 	private volatile LocationManager locationManager;
 
@@ -30,6 +30,8 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public IBinder onBind(Intent intent) {
+		if (BuildConfig.DEBUG)
+			Log.d("FELIPETESTE", "onBind(intent)->" + intent);
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -48,7 +50,7 @@ public class FollowMeService extends Service implements LocationListener {
 			return Service.START_NOT_STICKY;
 		}
 
-		initProviders(locationManager, THIRD_SECONDS, this);
+		initProviders(locationManager, MIN_INTERVAL, this);
 		startForeground(SERVICE_ID, builder.build());
 		startKillAlarm();
 		isRunning = true;
@@ -65,28 +67,29 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public void onDestroy() {
-		locationManager.removeUpdates(this);
+		if (locationManager != null)
+			locationManager.removeUpdates(this);
 		super.onDestroy();
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		HashMap<String, Double> m = new HashMap<>();
-		m.put(LATITUDE, location.getLatitude());
-		m.put(LONGITUDE, location.getLongitude());
 		session().send(m);
+		Map<String, Double> map = new HashMap<>();
+		map.put(LATITUDE, location.getLatitude());
+		map.put(LONGITUDE, location.getLongitude());
+
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged() session.send()->called");
 	}
 
 	@Override
-	public void onProviderDisabled(String arg0) {
-	}
+	public void onProviderDisabled(String arg0) { }
 
 	@Override
-	public void onProviderEnabled(String arg0) {
-	}
+	public void onProviderEnabled(String arg0) { }
 
 	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-	}
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) { }
 
 }

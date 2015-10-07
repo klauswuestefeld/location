@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 public class SendLocationActivity extends Activity implements LocationListener {
 
+	static final long MIN_TIME = 1000L;
 	private LocationManager locationManager;
 
 	private Location latestLocation;
@@ -28,7 +29,7 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		sendButton.setEnabled(false);
 
 		locationManager = LocationManager.getInstance(getApplicationContext());
-		LocationUtils.initProviders(locationManager, 1000, this);
+		LocationUtils.initProviders(locationManager, MIN_TIME, this);
 	}
 
 
