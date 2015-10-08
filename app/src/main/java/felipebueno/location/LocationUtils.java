@@ -5,9 +5,9 @@ import android.util.Log;
 
 import java.util.List;
 
-public class LocationUtils {
+import static felipebueno.location.LogUtils.*;
 
-	static final String TAG = "LOCATION_DEBUG";
+public class LocationUtils {
 
 	static final String LATITUDE = "latitude";
 	static final String LONGITUDE = "longitude";
@@ -26,7 +26,7 @@ public class LocationUtils {
 			try {
 				locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, minTime, 0.0F, listener);
 			} catch (IllegalArgumentException e) {
-				Log.d(TAG, "failed to request a location with fused provider" + e);
+				Log.e(TAG, "failed to request a location with fused provider" + e);
 			}
 		}
 
@@ -34,8 +34,7 @@ public class LocationUtils {
 		try {
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, 0.0F, listener);
 		} catch (IllegalArgumentException e) {
-			if (BuildConfig.DEBUG)
-				Log.d(TAG, "failed to request a location with network provider" + e);
+			Log.e(TAG, "failed to request a location with network provider" + e);
 		}
 	}
 

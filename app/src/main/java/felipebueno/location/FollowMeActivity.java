@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -17,8 +16,8 @@ import sneer.android.PartnerSession;
 
 import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
-import static felipebueno.location.LocationUtils.TAG;
 import static felipebueno.location.LocationUtils.initProviders;
+import static felipebueno.location.LogUtils.log;
 
 public class FollowMeActivity extends Activity implements LocationListener {
 
@@ -83,8 +82,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 				);
 			}
 		});
-		if (BuildConfig.DEBUG)
-			Log.d(TAG, getClass().getSimpleName() + "refresh()->called");
+		log(this, "refresh()->called");
 	}
 
 	private void handle(Message message) {
@@ -98,8 +96,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 			theirLongitude = m.get(LONGITUDE);
 		}
 
-		if (BuildConfig.DEBUG)
-			Log.d(TAG, getClass().getSimpleName() + "handle(message)->m" + m);
+		log(this, "handle(message)->m " + m);
 	}
 
 	protected String getMapURL(int width, int height) {
@@ -149,8 +146,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 		m.put(LATITUDE, location.getLatitude());
 		m.put(LONGITUDE, location.getLongitude());
 		session.send(m);
-		if (BuildConfig.DEBUG)
-			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged(1) session.send()->called");
+		log(this, "onLocationChanged(1) session.send()->called");
 	}
 
 	@Override

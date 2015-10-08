@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -19,8 +18,8 @@ import java.util.Map;
 
 import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
-import static felipebueno.location.LocationUtils.TAG;
 import static felipebueno.location.LocationUtils.initProviders;
+import static felipebueno.location.LogUtils.log;
 
 public class FollowMeService extends Service implements LocationListener {
 
@@ -33,8 +32,7 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		if (BuildConfig.DEBUG)
-			Log.d("FELIPETESTE", "onBind(intent)->" + intent);
+		log(this, "onBind(intent)->" + intent);
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -82,8 +80,7 @@ public class FollowMeService extends Service implements LocationListener {
 		map.put(LONGITUDE, location.getLongitude());
 
 		FollowMeActivity.session.send(map);
-		if (BuildConfig.DEBUG)
-			Log.d(TAG, getClass().getSimpleName() + "onLocationChanged(2) session.send()->called");
+		log(this, "onLocationChanged(2) session.send()->called");
 	}
 
 	@Override
