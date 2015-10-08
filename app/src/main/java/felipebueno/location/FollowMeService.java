@@ -58,7 +58,7 @@ public class FollowMeService extends Service implements LocationListener {
 
 				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 					Toast.makeText(FollowMeService.this, "No GPS available", Toast.LENGTH_LONG).show();
-//					stopSelf();
+					stopSelf();
 //					return Service.START_NOT_STICKY;
 				}
 
