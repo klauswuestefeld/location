@@ -29,7 +29,7 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		sendButton.setEnabled(false);
 
 		locationManager = LocationManager.getInstance(getApplicationContext());
-		LocationUtils.initProviders(locationManager, MIN_TIME, this);
+		LocationUtils.initProviders(locationManager, MIN_TIME, this, getMainLooper());
 	}
 
 

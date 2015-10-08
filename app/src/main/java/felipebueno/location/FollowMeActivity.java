@@ -1,31 +1,24 @@
 package felipebueno.location;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
 import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
-import static felipebueno.location.LocationUtils.initProviders;
 import static felipebueno.location.LogUtils.log;
 
-public class FollowMeActivity extends Activity implements LocationListener {
+public class FollowMeActivity extends Activity {
 
 	private static final int MAX_SIZE = 640;
-	static final long MIN_TIME = 30000L;
-	private Intent service;
 
-	private LocationManager locationManager;
 	private double myLatitude;
 	private double myLongitude;
 	private double theirLatitude;
@@ -35,18 +28,19 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_PROGRESS);
+		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_follow_me);
 		map = (ImageView) findViewById(R.id.map_view);
 
+//		DELETE THIS LINE AFTER TESTING
+		map.setVisibility(View.INVISIBLE);
+//		DELETE THIS LINE AFTER TESTING ^
+
 		showProgressBar();
-
 		startSession();
-
-		if (!FollowMeService.isRunning)
-			service = new Intent(this, FollowMeService.class);
 	}
 
 	private void startSession() {
@@ -64,11 +58,6 @@ public class FollowMeActivity extends Activity implements LocationListener {
 	}
 
 	private void refresh() {
-		if (locationManager == null) {
-			locationManager = LocationManager.getInstance(getApplicationContext());
-			initProviders(locationManager, MIN_TIME, this);
-		}
-
 		map.post(new Runnable() {
 			@Override
 			public void run() {
@@ -77,9 +66,10 @@ public class FollowMeActivity extends Activity implements LocationListener {
 
 				showProgressBar();
 
-				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
-					getMapURL(width, height)
-				);
+//				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
+//					getMapURL(width, height)
+//				);
+
 			}
 		});
 		log(this, "refresh()->called");
@@ -135,30 +125,7 @@ public class FollowMeActivity extends Activity implements LocationListener {
 	protected void onDestroy() {
 		if (session != null)
 			session.close();
-		if (!FollowMeService.isRunning)
-			startService(service);
 		super.onDestroy();
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		Map<String, Double> m = new HashMap<>();
-		m.put(LATITUDE, location.getLatitude());
-		m.put(LONGITUDE, location.getLongitude());
-		session.send(m);
-		log(this, "onLocationChanged(1) session.send()->called");
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
 	}
 
 }

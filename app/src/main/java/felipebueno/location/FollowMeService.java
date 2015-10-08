@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -24,8 +26,10 @@ import static felipebueno.location.LogUtils.log;
 public class FollowMeService extends Service implements LocationListener {
 
 	public static final int SERVICE_ID = 1234;
-	private static final Long MIN_INTERVAL = 30000L;
+	private static final Long THIRD_SECONDS = 3000L;
+	private static final long ONE_HOUR = (long) (60 * 1000);
 
+	private Handler mainHandler = new Handler(Looper.getMainLooper());
 	private volatile LocationManager locationManager;
 
 	public static boolean isRunning;
@@ -38,23 +42,33 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setSmallIcon(R.mipmap.ic_launcher)
-				.setContentTitle("Location")
-				.setContentText("Sending your GPS location...")
-				.setOnlyAlertOnce(true);
+		log(this, "onStartCommand()->called");
 
-		locationManager = LocationManager.getInstance(getApplicationContext());
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			Toast.makeText(this, "No GPS available", Toast.LENGTH_LONG).show();
-			stopSelf();
-			return Service.START_NOT_STICKY;
-		}
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				NotificationCompat.Builder builder = new NotificationCompat.Builder(FollowMeService.this);
+				builder.setSmallIcon(R.mipmap.ic_launcher)
+						.setContentTitle("Location")
+						.setContentText("Sending your GPS location...")
+						.setOnlyAlertOnce(true);
 
-		initProviders(locationManager, MIN_INTERVAL, this);
-		startForeground(SERVICE_ID, builder.build());
-		startKillAlarm();
-		isRunning = true;
+				locationManager = LocationManager.getInstance(getApplicationContext());
+				initProviders(locationManager, THIRD_SECONDS, FollowMeService.this, Looper.getMainLooper());
+
+				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+					Toast.makeText(FollowMeService.this, "No GPS available", Toast.LENGTH_LONG).show();
+//					stopSelf();
+//					return Service.START_NOT_STICKY;
+				}
+
+				startForeground(SERVICE_ID, builder.build());
+				startKillAlarm();
+				isRunning = true;
+			}
+		};
+
+		t.start();
 		return Service.START_STICKY;
 	}
 
@@ -63,33 +77,33 @@ public class FollowMeService extends Service implements LocationListener {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, FollowMeServiceKiller.class);
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-		alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * 60, alarmIntent);
+		alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + ONE_HOUR, alarmIntent);
 	}
 
 	@Override
 	public void onDestroy() {
+		log(this, "onDestroy()");
 		if (locationManager != null)
 			locationManager.removeUpdates(this);
 		super.onDestroy();
 	}
 
 	@Override
-	public void onLocationChanged(Location location) {
-		Map<String, Double> map = new HashMap<>();
-		map.put(LATITUDE, location.getLatitude());
-		map.put(LONGITUDE, location.getLongitude());
-
-		FollowMeActivity.session.send(map);
-		log(this, "onLocationChanged(2) session.send()->called");
+	public void onLocationChanged(final Location location) {
+		log(this, "onLocationChanged()");
+		mainHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Map<String, Double> map = new HashMap<>();
+				map.put(LATITUDE, location.getLatitude());
+				map.put(LONGITUDE, location.getLongitude());
+				FollowMeActivity.session.send(map);
+			}
+		});
 	}
 
-	@Override
-	public void onProviderDisabled(String arg0) { }
-
-	@Override
-	public void onProviderEnabled(String arg0) { }
-
-	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) { }
+	@Override public void onProviderDisabled(String arg0) { }
+	@Override public void onProviderEnabled(String arg0) { }
+	@Override public void onStatusChanged(String arg0, int arg1, Bundle arg2) { }
 
 }
