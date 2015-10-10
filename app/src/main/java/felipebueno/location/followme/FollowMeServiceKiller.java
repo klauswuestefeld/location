@@ -1,4 +1,4 @@
-package felipebueno.location;
+package felipebueno.location.followme;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".FollowMe"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher">
 
@@ -16,7 +15,7 @@
             android:value=""/>
 
         <activity
-            android:name="felipebueno.location.SendLocationActivity"
+            android:name="felipebueno.location.sendlocation.SendLocationActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Send Location"
@@ -24,7 +23,7 @@
         </activity>
 
         <activity
-            android:name="felipebueno.location.FollowMeActivity"
+            android:name="felipebueno.location.followme.FollowMeActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Follow me for 1h">
@@ -34,12 +33,12 @@
         </activity>
 
         <service
-            android:name="felipebueno.location.FollowMeService"
+            android:name="felipebueno.location.followme.FollowMeService"
             android:enabled="true">
         </service>
 
         <receiver
-            android:name="felipebueno.location.FollowMeServiceKiller"
+            android:name="felipebueno.location.followme.FollowMeServiceKiller"
             android:enabled="true">
         </receiver>
     </application>

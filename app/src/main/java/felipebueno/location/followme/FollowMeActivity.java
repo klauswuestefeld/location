@@ -1,13 +1,19 @@
-package felipebueno.location;
+package felipebueno.location.followme;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.view.View;
+import android.os.IBinder;
 import android.view.Window;
 import android.widget.ImageView;
 
 import java.util.HashMap;
 
+import felipebueno.location.MapDownloader;
+import felipebueno.location.R;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
@@ -34,10 +40,6 @@ public class FollowMeActivity extends Activity {
 
 		setContentView(R.layout.activity_follow_me);
 		map = (ImageView) findViewById(R.id.map_view);
-
-//		DELETE THIS LINE AFTER TESTING
-		map.setVisibility(View.INVISIBLE);
-//		DELETE THIS LINE AFTER TESTING ^
 
 		showProgressBar();
 		startSession();
@@ -66,13 +68,13 @@ public class FollowMeActivity extends Activity {
 
 				showProgressBar();
 
-//				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
-//					getMapURL(width, height)
-//				);
+				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
+						getMapURL(width, height)
+				);
 
 			}
 		});
-		log(this, "refresh()->called");
+		log(this, "FELIPETESTE refresh()->called");
 	}
 
 	private void handle(Message message) {
@@ -86,7 +88,7 @@ public class FollowMeActivity extends Activity {
 			theirLongitude = m.get(LONGITUDE);
 		}
 
-		log(this, "handle(message)->m " + m);
+		log(this, "FELIPETESTE handle(message)->m " + m);
 	}
 
 	protected String getMapURL(int width, int height) {
@@ -116,6 +118,16 @@ public class FollowMeActivity extends Activity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+
+		Intent service = new Intent(this, FollowMeService.class);
+		if (!FollowMeService.isRunning)
+			startService(service);
+		bindService(service, connection, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
 		finish();
@@ -127,5 +139,22 @@ public class FollowMeActivity extends Activity {
 			session.close();
 		super.onDestroy();
 	}
+
+	private FollowMeService localService;
+	private boolean flag;
+	ServiceConnection connection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			FollowMeService.LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
+			localService = returnLocalService.getService();
+			flag = true;
+			log(FollowMeActivity.this, "onServiceConnected.localService->" + localService);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			flag = false;
+		}
+	};
 
 }

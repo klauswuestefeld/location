@@ -10,10 +10,10 @@ import static felipebueno.location.LogUtils.*;
 
 public class LocationUtils {
 
-	static final String LATITUDE = "latitude";
-	static final String LONGITUDE = "longitude";
+	public static final String LATITUDE = "latitude";
+	public static final String LONGITUDE = "longitude";
 
-	static void initProviders(LocationManager locationManager, Long minTime, LocationListener listener, Looper looper) {
+	public static void initProviders(LocationManager locationManager, Long minTime, LocationListener listener, Looper looper) {
 		List<String> providers = locationManager.getAllProviders();
 		boolean hasFused = false;
 		for (String provider : providers) {

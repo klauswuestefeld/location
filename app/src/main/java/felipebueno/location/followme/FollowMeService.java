@@ -1,4 +1,4 @@
-package felipebueno.location;
+package felipebueno.location.followme;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,26 +19,37 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
+import felipebueno.location.LocationManager;
+import felipebueno.location.R;
+
 import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
 import static felipebueno.location.LocationUtils.initProviders;
 import static felipebueno.location.LogUtils.log;
+import static felipebueno.location.followme.FollowMeActivity.session;
 
 public class FollowMeService extends Service implements LocationListener {
 
 	public static final int SERVICE_ID = 1234;
-	private static final Long THIRD_SECONDS = 3000L;
-	private static final long ONE_HOUR = (long) (60 * 1000);
+	private static final Long THIRD_SECONDS = 30000L;
+	private static final long ONE_HOUR = (long) (60 * 1000 * 60);
 
 	private Handler mainHandler = new Handler(Looper.getMainLooper());
 	private volatile LocationManager locationManager;
 
 	public static boolean isRunning;
 
+	private final IBinder mBinder = new LocalBinder();
+	public class LocalBinder extends Binder {
+		public FollowMeService getService() {
+			return FollowMeService.this;
+		}
+	}
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		log(this, "onBind(intent)->" + intent);
-		throw new UnsupportedOperationException("Not yet implemented");
+		return mBinder;
 	}
 
 	@Override
@@ -91,19 +103,30 @@ public class FollowMeService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(final Location location) {
 		log(this, "onLocationChanged()");
-		mainHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				Map<String, Double> map = new HashMap<>();
-				map.put(LATITUDE, location.getLatitude());
-				map.put(LONGITUDE, location.getLongitude());
-				FollowMeActivity.session.send(map);
-			}
-		});
+		if (session.wasStartedByMe())
+			mainHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					Map<String, Double> map = new HashMap<>();
+					map.put(LATITUDE, location.getLatitude());
+					map.put(LONGITUDE, location.getLongitude());
+					session.send(map);
+				}
+			});
+		else
+			log(this, "session not started by my. Won't send my location");
 	}
 
-	@Override public void onProviderDisabled(String arg0) { }
-	@Override public void onProviderEnabled(String arg0) { }
-	@Override public void onStatusChanged(String arg0, int arg1, Bundle arg2) { }
+	@Override
+	public void onProviderDisabled(String arg0) {
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+	}
 
 }
