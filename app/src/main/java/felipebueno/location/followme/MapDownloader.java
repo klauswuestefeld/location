@@ -1,4 +1,4 @@
-package felipebueno.location;
+package felipebueno.location.followme;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -9,22 +9,18 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
-import sneer.android.PartnerSession;
-
 public class MapDownloader extends AsyncTask<String, Void, Bitmap> {
 
-	ImageView bmImage;
 	private final Activity activity;
-	private final PartnerSession session;
+	ImageView bmImage;
 	int width, height;
 	private String url;
 
-	public MapDownloader(ImageView bmImage, int width, int height, Activity activity, PartnerSession session) {
+	public MapDownloader(ImageView bmImage, int width, int height, Activity activity) {
 		this.width = width;
 		this.height = height;
 		this.bmImage = bmImage;
 		this.activity = activity;
-		this.session = session;
 	}
 
 	protected Bitmap doInBackground(String... urls) {

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import java.util.HashMap;
 
-import felipebueno.location.MapDownloader;
 import felipebueno.location.R;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
@@ -24,13 +23,28 @@ import static felipebueno.location.LogUtils.log;
 public class FollowMeActivity extends Activity {
 
 	private static final int MAX_SIZE = 640;
-
+	public static PartnerSession session;
 	private double myLatitude;
 	private double myLongitude;
 	private double theirLatitude;
 	private double theirLongitude;
 	private ImageView map;
-	public static PartnerSession session;
+	private FollowMeService localService;
+	private boolean flag;
+	private ServiceConnection connection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			FollowMeService.LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
+			localService = returnLocalService.getService();
+			flag = true;
+			log(FollowMeActivity.this, "onServiceConnected.localService->" + localService);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			flag = false;
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +82,13 @@ public class FollowMeActivity extends Activity {
 
 				showProgressBar();
 
-				new MapDownloader(map, width, height, FollowMeActivity.this, session).execute(
+				new MapDownloader(map, width, height, FollowMeActivity.this).execute(
 						getMapURL(width, height)
 				);
 
 			}
 		});
-		log(this, "FELIPETESTE refresh()->called");
+		log(this, "refresh()->called");
 	}
 
 	private void handle(Message message) {
@@ -88,7 +102,7 @@ public class FollowMeActivity extends Activity {
 			theirLongitude = m.get(LONGITUDE);
 		}
 
-		log(this, "FELIPETESTE handle(message)->m " + m);
+		log(this, "handle(message)->m " + m);
 	}
 
 	protected String getMapURL(int width, int height) {
@@ -139,22 +153,5 @@ public class FollowMeActivity extends Activity {
 			session.close();
 		super.onDestroy();
 	}
-
-	private FollowMeService localService;
-	private boolean flag;
-	ServiceConnection connection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			FollowMeService.LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
-			localService = returnLocalService.getService();
-			flag = true;
-			log(FollowMeActivity.this, "onServiceConnected.localService->" + localService);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			flag = false;
-		}
-	};
 
 }

@@ -47,7 +47,7 @@ public class SendLocationActivity extends Activity implements LocationListener {
 	public void onSendClicked(View view) {
 		Intent msg = getIntent().getParcelableExtra("SEND_MESSAGE");
 		if (msg != null) {
-			String url = "Location:\nhttps://google.com/maps/place/" + latestLocation.getLatitude() + "," + latestLocation.getLongitude();
+			String url = "I'm here:\nhttps://google.com/maps/place/" + latestLocation.getLatitude() + "," + latestLocation.getLongitude();
 			startService(msg.setAction(url));
 		}
 		finish();

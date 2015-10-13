@@ -33,18 +33,10 @@ public class FollowMeService extends Service implements LocationListener {
 	public static final int SERVICE_ID = 1234;
 	private static final Long THIRD_SECONDS = 30000L;
 	private static final long ONE_HOUR = (long) (60 * 1000 * 60);
-
+	public static boolean isRunning;
+	private final IBinder mBinder = new LocalBinder();
 	private Handler mainHandler = new Handler(Looper.getMainLooper());
 	private volatile LocationManager locationManager;
-
-	public static boolean isRunning;
-
-	private final IBinder mBinder = new LocalBinder();
-	public class LocalBinder extends Binder {
-		public FollowMeService getService() {
-			return FollowMeService.this;
-		}
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -127,6 +119,12 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+	}
+
+	public class LocalBinder extends Binder {
+		public FollowMeService getService() {
+			return FollowMeService.this;
+		}
 	}
 
 }

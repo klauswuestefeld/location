@@ -6,7 +6,7 @@ import android.util.Log;
 
 import java.util.List;
 
-import static felipebueno.location.LogUtils.*;
+import static felipebueno.location.LogUtils.TAG;
 
 public class LocationUtils {
 
