@@ -36,7 +36,6 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		LocationUtils.initProviders(locationManager, MIN_TIME, this, getMainLooper());
 	}
 
-
 	@Override
 	protected void onPause() {
 		locationManager.removeUpdates(this);

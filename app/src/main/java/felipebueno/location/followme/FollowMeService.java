@@ -26,6 +26,7 @@ import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
 import static felipebueno.location.LocationUtils.initProviders;
 import static felipebueno.location.LogUtils.log;
+import static felipebueno.location.followme.FollowMeActivity.*;
 import static felipebueno.location.followme.FollowMeActivity.session;
 
 public class FollowMeService extends Service implements LocationListener {
@@ -95,7 +96,7 @@ public class FollowMeService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(final Location location) {
 		log(this, "onLocationChanged()");
-		if (session.wasStartedByMe())
+		if (session.wasStartedByMe()) {
 			mainHandler.post(new Runnable() {
 				@Override
 				public void run() {
@@ -105,8 +106,11 @@ public class FollowMeService extends Service implements LocationListener {
 					session.send(map);
 				}
 			});
-		else
+		} else {
 			log(this, "session not started by my. Won't send my location");
+			myLatitude = location.getLatitude();
+			myLongitude = location.getLongitude();
+		}
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 ## TODO
 #### Session
-- [ ] Quem recebe a session não deve mandar sua localização
+- [x] Quem recebe a session não deve mandar sua localização
 - [ ] Detectar session antiga para não enviar de novo
 
 #### Service

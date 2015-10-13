@@ -24,14 +24,14 @@ public class FollowMeActivity extends Activity {
 
 	private static final int MAX_SIZE = 640;
 	public static PartnerSession session;
-	private double myLatitude;
-	private double myLongitude;
+	public static double myLatitude;
+	public static double myLongitude;
 	private double theirLatitude;
 	private double theirLongitude;
 	private ImageView map;
 	private FollowMeService localService;
 	private boolean flag;
-	private ServiceConnection connection = new ServiceConnection() {
+	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			FollowMeService.LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
@@ -51,8 +51,8 @@ public class FollowMeActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_follow_me);
+
 		map = (ImageView) findViewById(R.id.map_view);
 
 		showProgressBar();
@@ -88,18 +88,21 @@ public class FollowMeActivity extends Activity {
 
 			}
 		});
-		log(this, "refresh()->called");
+		log(this, "FELIPETESTE refresh()->called");
 	}
 
-	private void handle(Message message) {
+	public void handle(Message message) {
 		HashMap<String, Double> m = (HashMap<String, Double>) message.payload();
 
 		if (message.wasSentByMe()) {
 			myLatitude = m.get(LATITUDE);
 			myLongitude = m.get(LONGITUDE);
+			log(this, "FELIPETESTE message sent by me");
+
 		} else {
 			theirLatitude = m.get(LATITUDE);
 			theirLongitude = m.get(LONGITUDE);
+			log(this, "FELIPETESTE message not sent by me");
 		}
 
 		log(this, "handle(message)->m " + m);
@@ -136,8 +139,11 @@ public class FollowMeActivity extends Activity {
 		super.onResume();
 
 		Intent service = new Intent(this, FollowMeService.class);
-		if (!FollowMeService.isRunning)
+//		service.putExtra("puk", ??)
+
+		if (!FollowMeService.isRunning) {
 			startService(service);
+		}
 		bindService(service, connection, Context.BIND_AUTO_CREATE);
 	}
 
