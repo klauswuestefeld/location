@@ -88,7 +88,7 @@ public class FollowMeActivity extends Activity {
 
 			}
 		});
-		log(this, "FELIPETESTE refresh()->called");
+		log(this, "refresh()->called");
 	}
 
 	public void handle(Message message) {
@@ -97,12 +97,9 @@ public class FollowMeActivity extends Activity {
 		if (message.wasSentByMe()) {
 			myLatitude = m.get(LATITUDE);
 			myLongitude = m.get(LONGITUDE);
-			log(this, "FELIPETESTE message sent by me");
-
 		} else {
 			theirLatitude = m.get(LATITUDE);
 			theirLongitude = m.get(LONGITUDE);
-			log(this, "FELIPETESTE message not sent by me");
 		}
 
 		log(this, "handle(message)->m " + m);

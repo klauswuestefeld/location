@@ -15,7 +15,7 @@ public class FollowMeServiceKiller extends BroadcastReceiver {
 		victim.stopForeground(true);
 		victim.stopSelf();
 		FollowMeService.isRunning = false;
-		log(this, "FollowMeServiceKiller called. intent->" + intent);
+		log(this, "FollowMeServiceKiller intent->" + intent);
 	}
 
 }
