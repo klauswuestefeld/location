@@ -26,14 +26,15 @@ import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
 import static felipebueno.location.LocationUtils.initProviders;
 import static felipebueno.location.LogUtils.log;
-import static felipebueno.location.followme.FollowMeActivity.*;
+import static felipebueno.location.followme.FollowMeActivity.myLatitude;
+import static felipebueno.location.followme.FollowMeActivity.myLongitude;
 import static felipebueno.location.followme.FollowMeActivity.session;
 
 public class FollowMeService extends Service implements LocationListener {
 
 	public static final int SERVICE_ID = 1234;
-	private static final Long THIRD_SECONDS = 30000L;
-	private static final long ONE_HOUR = (long) (60 * 1000 * 60);
+	private static final Long THIRD_SECONDS = 10000L;//30000L;
+	private static final long ONE_HOUR = (60 * 1000);//(60 * 1000 * 60);
 	public static boolean isRunning;
 	private final IBinder mBinder = new LocalBinder();
 	private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -41,13 +42,13 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		log(this, "onBind(intent)->" + intent);
+		log(this, "onBind()");
 		return mBinder;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		log(this, "onStartCommand()->called");
+		log(this, "onStartCommand()");
 
 		Thread t = new Thread() {
 			@Override
@@ -96,33 +97,37 @@ public class FollowMeService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(final Location location) {
 		log(this, "onLocationChanged()");
-		if (session.wasStartedByMe()) {
-			mainHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					Map<String, Double> map = new HashMap<>();
+
+		mainHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Map<String, Double> map = new HashMap<>();
+				if (session.wasStartedByMe()) {
 					map.put(LATITUDE, location.getLatitude());
 					map.put(LONGITUDE, location.getLongitude());
 					session.send(map);
+				} else {
+					log(this, "session not started by my. Won't send my location");
+					myLatitude = location.getLatitude();
+					myLongitude = location.getLongitude();
 				}
-			});
-		} else {
-			log(this, "session not started by my. Won't send my location");
-			myLatitude = location.getLatitude();
-			myLongitude = location.getLongitude();
-		}
+			}
+		});
 	}
 
 	@Override
 	public void onProviderDisabled(String arg0) {
+		log(this, "onProviderDisabled()");
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
+		log(this, "onProviderEnabled()");
 	}
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		log(this, "onStatusChanged()");
 	}
 
 	public class LocalBinder extends Binder {

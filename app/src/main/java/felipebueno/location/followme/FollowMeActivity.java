@@ -2,7 +2,6 @@ package felipebueno.location.followme;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -18,19 +17,24 @@ import sneer.android.PartnerSession;
 
 import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
+import static felipebueno.location.LocationUtils.SESSION_DISCARDED;
 import static felipebueno.location.LogUtils.log;
 
 public class FollowMeActivity extends Activity {
 
 	private static final int MAX_SIZE = 640;
+
 	public static PartnerSession session;
 	public static double myLatitude;
 	public static double myLongitude;
+
 	private double theirLatitude;
 	private double theirLongitude;
 	private ImageView map;
 	private FollowMeService localService;
 	private boolean flag;
+
+	private Intent service;
 	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -52,6 +56,9 @@ public class FollowMeActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_follow_me);
+
+		service = new Intent(this, FollowMeService.class);
+//		service.putExtra("puk", ??)
 
 		map = (ImageView) findViewById(R.id.map_view);
 
@@ -88,12 +95,18 @@ public class FollowMeActivity extends Activity {
 
 			}
 		});
-		log(this, "refresh()->called");
+		log(this, "refresh()");
 	}
 
 	public void handle(Message message) {
 		HashMap<String, Double> m = (HashMap<String, Double>) message.payload();
+		log(this, "handle(message)->" + m);
 
+		Double discarded = m.get(SESSION_DISCARDED);
+		if ((discarded != null) && (discarded == 1)) {
+			log(this, SESSION_DISCARDED);
+			return;
+		}
 		if (message.wasSentByMe()) {
 			myLatitude = m.get(LATITUDE);
 			myLongitude = m.get(LONGITUDE);
@@ -101,8 +114,6 @@ public class FollowMeActivity extends Activity {
 			theirLatitude = m.get(LATITUDE);
 			theirLongitude = m.get(LONGITUDE);
 		}
-
-		log(this, "handle(message)->m " + m);
 	}
 
 	protected String getMapURL(int width, int height) {
@@ -122,10 +133,13 @@ public class FollowMeActivity extends Activity {
 		if (theirLatitude != 0.0)
 			url += "&markers=size:mid%7Ccolor:blue%7C" + theirLatitude + "," + theirLongitude;
 
+		log(this, "getMapURL: url->" + url);
+
 		return url;
 	}
 
 	private void showProgressBar() {
+		log(this, "showProgressBar()");
 		setProgressBarIndeterminate(true);
 		setProgressBarIndeterminateVisibility(true);
 		setProgressBarVisibility(true);
@@ -135,13 +149,12 @@ public class FollowMeActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		Intent service = new Intent(this, FollowMeService.class);
-//		service.putExtra("puk", ??)
-
 		if (!FollowMeService.isRunning) {
+			log(this, "startService()");
 			startService(service);
 		}
-		bindService(service, connection, Context.BIND_AUTO_CREATE);
+//		boolean isBinded = bindService(service, connection, Context.BIND_AUTO_CREATE);
+//		log(this, "bindService() isBinded?->" + isBinded);
 	}
 
 	@Override

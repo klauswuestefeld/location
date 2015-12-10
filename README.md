@@ -10,6 +10,10 @@
 - [ ] Allow user to kill the service
 
 
+#### Known Bugs
+- FollowMeActivity freezes from time to time
+- 
+
 #### Possível bug na PartnerSession api
 Método onUpToDate() não está sendo chamado quando cria a session e ainda não chegou nenhuma mensagem
 

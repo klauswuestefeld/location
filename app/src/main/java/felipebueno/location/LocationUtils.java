@@ -12,6 +12,7 @@ public class LocationUtils {
 
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
+	public static final String SESSION_DISCARDED = "session discarded";
 
 	public static void initProviders(LocationManager locationManager, Long minTime, LocationListener listener, Looper looper) {
 		List<String> providers = locationManager.getAllProviders();
