@@ -69,15 +69,14 @@ public class FollowMeActivity extends Activity {
 	private void startSession() {
 		session = PartnerSession.join(this, new PartnerSession.Listener() {
 			@Override
-			public void onUpToDate() {
-				refresh();
-			}
+			public void onUpToDate() { refresh(); }
 
 			@Override
-			public void onMessage(Message message) {
-				handle(message);
-			}
+			public void onMessage(Message message) { handle(message); }
 		});
+		if (!session.wasStartedByMe()) {
+			setTitle("Following for 1h");
+		}
 	}
 
 	private void refresh() {
