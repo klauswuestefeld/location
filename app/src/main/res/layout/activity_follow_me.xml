@@ -12,6 +12,6 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:background="#eee"
-        android:scaleType="fitXY"/>
+        android:scaleType="center"/>
 
 </RelativeLayout>

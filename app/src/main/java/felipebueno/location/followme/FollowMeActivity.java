@@ -19,6 +19,7 @@ import static felipebueno.location.LocationUtils.LATITUDE;
 import static felipebueno.location.LocationUtils.LONGITUDE;
 import static felipebueno.location.LocationUtils.SESSION_DISCARDED;
 import static felipebueno.location.LogUtils.log;
+import static felipebueno.location.followme.FollowMeService.isRunning;
 
 public class FollowMeActivity extends Activity {
 
@@ -33,7 +34,6 @@ public class FollowMeActivity extends Activity {
 	private ImageView map;
 	private FollowMeService localService;
 	private boolean flag;
-
 	private Intent service;
 	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
@@ -58,7 +58,6 @@ public class FollowMeActivity extends Activity {
 		setContentView(R.layout.activity_follow_me);
 
 		service = new Intent(this, FollowMeService.class);
-//		service.putExtra("puk", ??)
 
 		map = (ImageView) findViewById(R.id.map_view);
 
@@ -69,17 +68,17 @@ public class FollowMeActivity extends Activity {
 	private void startSession() {
 		session = PartnerSession.join(this, new PartnerSession.Listener() {
 			@Override
-			public void onUpToDate() { refresh(); }
+			public void onUpToDate() { FollowMeActivity.this.onUpToDate(); }
 
 			@Override
-			public void onMessage(Message message) { handle(message); }
+			public void onMessage(Message message) { FollowMeActivity.this.onMessage(message); }
 		});
 		if (!session.wasStartedByMe()) {
 			setTitle("Following for 1h");
 		}
 	}
 
-	private void refresh() {
+	private void onUpToDate() {
 		map.post(new Runnable() {
 			@Override
 			public void run() {
@@ -94,18 +93,21 @@ public class FollowMeActivity extends Activity {
 
 			}
 		});
-		log(this, "refresh()");
+		log(this, "onUpToDate()");
 	}
 
-	public void handle(Message message) {
+	public void onMessage(Message message) {
 		HashMap<String, Double> m = (HashMap<String, Double>) message.payload();
-		log(this, "handle(message)->" + m);
+		log(this, "onMessage(message)->" + m);
 
 		Double discarded = m.get(SESSION_DISCARDED);
 		if ((discarded != null) && (discarded == 1)) {
 			log(this, SESSION_DISCARDED);
+			stopService(service);
+			finish();
 			return;
 		}
+
 		if (message.wasSentByMe()) {
 			myLatitude = m.get(LATITUDE);
 			myLongitude = m.get(LONGITUDE);
@@ -116,13 +118,18 @@ public class FollowMeActivity extends Activity {
 	}
 
 	protected String getMapURL(int width, int height) {
+		log(this, String.valueOf(width));
+		log(this, String.valueOf(height));
 		if (width > height) {
-			width = MAX_SIZE;
 			height = MAX_SIZE * height / width;
+			width = MAX_SIZE;
 		} else {
-			height = MAX_SIZE;
 			width = MAX_SIZE * width / height;
+			height = MAX_SIZE;
 		}
+
+		log(this, String.valueOf(width));
+		log(this, String.valueOf(height));
 
 		String url = "https://maps.googleapis.com/maps/api/staticmap";
 		url += "?size=" + width + "x" + height + "&scale=2";
@@ -148,12 +155,10 @@ public class FollowMeActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		if (!FollowMeService.isRunning) {
+		if (!isRunning) {
 			log(this, "startService()");
 			startService(service);
 		}
-//		boolean isBinded = bindService(service, connection, Context.BIND_AUTO_CREATE);
-//		log(this, "bindService() isBinded?->" + isBinded);
 	}
 
 	@Override

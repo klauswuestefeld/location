@@ -33,8 +33,8 @@ import static felipebueno.location.followme.FollowMeActivity.session;
 public class FollowMeService extends Service implements LocationListener {
 
 	public static final int SERVICE_ID = 1234;
-	private static final Long THIRD_SECONDS = 10000L;//30000L;
-	private static final long ONE_HOUR = (60 * 2000);//(60 * 1000 * 60);
+	private static final Long THIRD_SECONDS = 2000L;//30000L;
+	public static final long ONE_HOUR = (60 * 2000);//(60 * 1000 * 60);
 	public static boolean isRunning;
 	private final IBinder mBinder = new LocalBinder();
 	private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -65,7 +65,6 @@ public class FollowMeService extends Service implements LocationListener {
 				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 					Toast.makeText(FollowMeService.this, "No GPS available", Toast.LENGTH_LONG).show();
 					stopSelf();
-//					return Service.START_NOT_STICKY;
 				}
 
 				startForeground(SERVICE_ID, builder.build());

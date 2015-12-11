@@ -21,6 +21,7 @@ public class FollowMeServiceKiller extends BroadcastReceiver {
 		FollowMeService.isRunning = false;
 		Map<String, Double> map = new HashMap<>();
 		map.put(SESSION_DISCARDED, (double) 1);
+		FollowMeActivity.session.send(map);
 		log(this, "FollowMeServiceKiller intent->" + intent);
 	}
 
