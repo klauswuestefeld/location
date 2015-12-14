@@ -1,4 +1,4 @@
-package felipebueno.location.sendlocation;
+package io.github.felipebueno.location.sendlocation;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,9 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import felipebueno.location.LocationManager;
-import felipebueno.location.LocationUtils;
-import felipebueno.location.R;
+import io.github.felipebueno.location.LocationManager;
+import io.github.felipebueno.location.LocationUtils;
+import io.github.felipebueno.location.R;
 
 
 public class SendLocationActivity extends Activity implements LocationListener {

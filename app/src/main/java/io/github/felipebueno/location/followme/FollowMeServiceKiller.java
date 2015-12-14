@@ -1,4 +1,4 @@
-package felipebueno.location.followme;
+package io.github.felipebueno.location.followme;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,8 +7,8 @@ import android.content.Intent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static felipebueno.location.LocationUtils.SESSION_DISCARDED;
-import static felipebueno.location.LogUtils.log;
+import static io.github.felipebueno.location.LocationUtils.SESSION_DISCARDED;
+import static io.github.felipebueno.location.LogUtils.log;
 
 public class FollowMeServiceKiller extends BroadcastReceiver {
 

@@ -1,4 +1,4 @@
-package felipebueno.location.followme;
+package io.github.felipebueno.location.followme;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,16 +19,16 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
-import felipebueno.location.LocationManager;
-import felipebueno.location.R;
+import io.github.felipebueno.location.LocationManager;
+import io.github.felipebueno.location.R;
 
-import static felipebueno.location.LocationUtils.LATITUDE;
-import static felipebueno.location.LocationUtils.LONGITUDE;
-import static felipebueno.location.LocationUtils.initProviders;
-import static felipebueno.location.LogUtils.log;
-import static felipebueno.location.followme.FollowMeActivity.myLatitude;
-import static felipebueno.location.followme.FollowMeActivity.myLongitude;
-import static felipebueno.location.followme.FollowMeActivity.session;
+import static io.github.felipebueno.location.LocationUtils.LATITUDE;
+import static io.github.felipebueno.location.LocationUtils.LONGITUDE;
+import static io.github.felipebueno.location.LocationUtils.initProviders;
+import static io.github.felipebueno.location.LogUtils.log;
+import static io.github.felipebueno.location.followme.FollowMeActivity.myLatitude;
+import static io.github.felipebueno.location.followme.FollowMeActivity.myLongitude;
+import static io.github.felipebueno.location.followme.FollowMeActivity.session;
 
 public class FollowMeService extends Service implements LocationListener {
 

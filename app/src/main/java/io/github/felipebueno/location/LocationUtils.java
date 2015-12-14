@@ -1,4 +1,4 @@
-package felipebueno.location;
+package io.github.felipebueno.location;
 
 import android.location.LocationListener;
 import android.os.Looper;
@@ -6,7 +6,7 @@ import android.util.Log;
 
 import java.util.List;
 
-import static felipebueno.location.LogUtils.TAG;
+import static io.github.felipebueno.location.LogUtils.TAG;
 
 public class LocationUtils {
 

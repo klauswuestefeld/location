@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "felipebueno.location"
+        applicationId "io.github.felipebueno.location"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

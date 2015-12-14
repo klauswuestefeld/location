@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package felipebueno.location;
+package io.github.felipebueno.location;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;

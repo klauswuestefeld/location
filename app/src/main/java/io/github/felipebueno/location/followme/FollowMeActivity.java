@@ -1,4 +1,4 @@
-package felipebueno.location.followme;
+package io.github.felipebueno.location.followme;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -11,15 +11,16 @@ import android.widget.ImageView;
 
 import java.util.HashMap;
 
-import felipebueno.location.R;
+import io.github.felipebueno.location.R;
+import io.github.felipebueno.location.followme.FollowMeService.LocalBinder;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
-import static felipebueno.location.LocationUtils.LATITUDE;
-import static felipebueno.location.LocationUtils.LONGITUDE;
-import static felipebueno.location.LocationUtils.SESSION_DISCARDED;
-import static felipebueno.location.LogUtils.log;
-import static felipebueno.location.followme.FollowMeService.isRunning;
+import static io.github.felipebueno.location.LocationUtils.LATITUDE;
+import static io.github.felipebueno.location.LocationUtils.LONGITUDE;
+import static io.github.felipebueno.location.LocationUtils.SESSION_DISCARDED;
+import static io.github.felipebueno.location.LogUtils.log;
+import static io.github.felipebueno.location.followme.FollowMeService.isRunning;
 
 public class FollowMeActivity extends Activity {
 
@@ -34,11 +35,10 @@ public class FollowMeActivity extends Activity {
 	private ImageView map;
 	private FollowMeService localService;
 	private boolean flag;
-	private Intent service;
 	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			FollowMeService.LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
+			LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
 			localService = returnLocalService.getService();
 			flag = true;
 			log(FollowMeActivity.this, "onServiceConnected.localService->" + localService);
@@ -49,6 +49,7 @@ public class FollowMeActivity extends Activity {
 			flag = false;
 		}
 	};
+	private Intent service;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +69,14 @@ public class FollowMeActivity extends Activity {
 	private void startSession() {
 		session = PartnerSession.join(this, new PartnerSession.Listener() {
 			@Override
-			public void onUpToDate() { FollowMeActivity.this.onUpToDate(); }
+			public void onUpToDate() {
+				FollowMeActivity.this.onUpToDate();
+			}
 
 			@Override
-			public void onMessage(Message message) { FollowMeActivity.this.onMessage(message); }
+			public void onMessage(Message message) {
+				FollowMeActivity.this.onMessage(message);
+			}
 		});
 		if (!session.wasStartedByMe()) {
 			setTitle("Following for 1h");

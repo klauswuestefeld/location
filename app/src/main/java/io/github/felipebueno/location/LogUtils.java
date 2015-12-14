@@ -1,4 +1,4 @@
-package felipebueno.location;
+package io.github.felipebueno.location;
 
 import android.util.Log;
 

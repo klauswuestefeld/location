@@ -1,4 +1,4 @@
-package felipebueno.location.followme;
+package io.github.felipebueno.location.followme;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
