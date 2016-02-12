@@ -39,6 +39,7 @@ public class FollowMeService extends Service implements LocationListener {
 	private final IBinder mBinder = new LocalBinder();
 	private Handler mainHandler = new Handler(Looper.getMainLooper());
 	private volatile LocationManager locationManager;
+	private static Context context;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -48,6 +49,7 @@ public class FollowMeService extends Service implements LocationListener {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		context = this.getApplicationContext();
 		log(this, "onStartCommand()");
 
 		Thread t = new Thread() {
@@ -62,10 +64,15 @@ public class FollowMeService extends Service implements LocationListener {
 				locationManager = LocationManager.getInstance(getApplicationContext());
 				initProviders(locationManager, THIRD_SECONDS, FollowMeService.this, Looper.getMainLooper());
 
-				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-					Toast.makeText(FollowMeService.this, "No GPS available", Toast.LENGTH_LONG).show();
-					stopSelf();
-				}
+				mainHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+							Toast.makeText(context, "Turn on your GPS", Toast.LENGTH_LONG).show();
+							stopSelf();
+						}
+					}
+				});
 
 				startForeground(SERVICE_ID, builder.build());
 				startKillAlarm();
