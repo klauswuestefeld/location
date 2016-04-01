@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="io.github.felipebueno.location"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="io.github.felipebueno.location"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher">
-
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name">
         <meta-data
             android:name="SneerApp"
             android:value=""/>
 
         <activity
-            android:name="io.github.felipebueno.location.sendlocation.SendLocationActivity"
+            android:name=".sendlocation.SendLocationActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Send Location"
             android:theme="@android:style/Theme.DeviceDefault.Dialog">
         </activity>
-
         <activity
-            android:name="io.github.felipebueno.location.followme.FollowMeActivity"
+            android:name=".followme.FollowMeActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="Follow me for 1h">
@@ -33,14 +31,15 @@
         </activity>
 
         <service
-            android:name="io.github.felipebueno.location.followme.FollowMeService"
+            android:name=".followme.FollowMeService"
             android:enabled="true">
         </service>
 
         <receiver
-            android:name="io.github.felipebueno.location.followme.FollowMeServiceKiller"
+            android:name=".followme.FollowMeServiceKiller"
             android:enabled="true">
         </receiver>
+
     </application>
 
 </manifest>
