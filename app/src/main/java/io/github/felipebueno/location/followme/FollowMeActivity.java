@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -16,6 +19,8 @@ import io.github.felipebueno.location.followme.FollowMeService.LocalBinder;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static io.github.felipebueno.location.LocationUtils.LATITUDE;
 import static io.github.felipebueno.location.LocationUtils.LONGITUDE;
 import static io.github.felipebueno.location.LocationUtils.SESSION_DISCARDED;
@@ -25,6 +30,7 @@ import static io.github.felipebueno.location.followme.FollowMeService.isRunning;
 public class FollowMeActivity extends Activity {
 
 	private static final int MAX_SIZE = 640;
+	private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 42;
 
 	public static PartnerSession session;
 	public static double myLatitude;
@@ -34,20 +40,16 @@ public class FollowMeActivity extends Activity {
 	private double theirLongitude;
 	private ImageView map;
 	private FollowMeService localService;
-	private boolean flag;
+
 	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			LocalBinder returnLocalService = (FollowMeService.LocalBinder) service;
 			localService = returnLocalService.getService();
-			flag = true;
 			log(FollowMeActivity.this, "onServiceConnected.localService->" + localService);
 		}
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			flag = false;
-		}
+		@Override public void onServiceDisconnected(ComponentName name) {}
 	};
 	private Intent service;
 
@@ -64,6 +66,9 @@ public class FollowMeActivity extends Activity {
 
 		showProgressBar();
 		startSession();
+
+		if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED)
+			ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_FINE_LOCATION);
 	}
 
 	private void startSession() {
@@ -158,18 +163,20 @@ public class FollowMeActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		super.onResume();
-
-		if (!isRunning) {
-			log(this, "startService()");
-			startService(service);
+		if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
+			if (!isRunning) {
+				log(this, "startService()");
+				startService(service);
+			}
 		}
+		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
+		if (isRunning)
+			finish();
 		super.onPause();
-		finish();
 	}
 
 	@Override
@@ -177,6 +184,21 @@ public class FollowMeActivity extends Activity {
 		if (session != null)
 			session.close();
 		super.onDestroy();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
+			if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+				if (!isRunning) {
+					log(this, "startService()");
+					startService(service);
+				}
+			} else {
+				Toast.makeText(this, "You must grant access to your device's location to use this app", Toast.LENGTH_SHORT).show();
+				finish();
+			}
+		}
 	}
 
 }

@@ -5,19 +5,25 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import io.github.felipebueno.location.LocationManager;
 import io.github.felipebueno.location.LocationUtils;
 import io.github.felipebueno.location.R;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class SendLocationActivity extends Activity implements LocationListener {
 
 	static final long MIN_TIME = 1000L;
-	private LocationManager locationManager;
+	private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 42;
+	private static LocationManager locationManager;
 
 	private Location latestLocation;
 	private TextView textAccuracy;
@@ -32,14 +38,16 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		sendButton = (Button) findViewById(R.id.buttonSend);
 		sendButton.setEnabled(false);
 
-		locationManager = LocationManager.getInstance(getApplicationContext());
-		LocationUtils.initProviders(locationManager, MIN_TIME, this, getMainLooper());
+		if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED)
+			ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_FINE_LOCATION);
 	}
 
 	@Override
 	protected void onPause() {
-		locationManager.removeUpdates(this);
-		finish();
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+			finish();
+		}
 		super.onPause();
 	}
 
@@ -56,11 +64,9 @@ public class SendLocationActivity extends Activity implements LocationListener {
 		finish();
 	}
 
-
 	@Override
 	public void onLocationChanged(Location location) {
 		latestLocation = location;
-
 		updateTextAccuracy();
 	}
 
@@ -75,15 +81,20 @@ public class SendLocationActivity extends Activity implements LocationListener {
 	}
 
 	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
+			if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+				locationManager = LocationManager.getInstance(getApplicationContext());
+				LocationUtils.initProviders(locationManager, MIN_TIME, this, getMainLooper());
+			} else {
+				Toast.makeText(this, "You must grant access to your device's location to use this app", Toast.LENGTH_SHORT).show();
+				finish();
+			}
+		}
 	}
 
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-	}
+	@Override public void onStatusChanged(String provider, int status, Bundle extras) {}
+	@Override public void onProviderEnabled(String provider) {}
+	@Override public void onProviderDisabled(String provider) {}
 
 }
